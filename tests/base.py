@@ -38,6 +38,8 @@ class BaseTests(TestCase):
     def tearDown(self):
         self.ws.delete()
 
+        self.assertFalse(self.ws.exist)
+
     def test_file_not_exist(self):
         file_name = 'file_not_exist.txt'
         self.assertFalse(self.ws.is_file(file_name))
@@ -73,15 +75,15 @@ class BaseTests(TestCase):
         self.ws.delete_file(full_file_name(file_name))
         self.assertFalse(self.ws.is_file(full_file_name(file_name)))
 
-    def test_child_of_workspace(self):
+    def test_child_workspace(self):
         dir_name = 'new_workspace'
         self.assertFalse(self.ws.is_dir(dir_name))
 
-        new_ws = self.ws.child_of_workspace(dir_name)
+        new_ws = self.ws.child_workspace(dir_name)
         self.assertTrue(self.ws.is_dir(dir_name))
         self.assertIsInstance(new_ws, WorkSpace)
 
-        new_ws = self.ws.child_of_workspace(dir_name)
+        new_ws = self.ws.child_workspace(dir_name)
         self.assertIsInstance(new_ws, WorkSpace)
 
     def test_permission_property(self):
