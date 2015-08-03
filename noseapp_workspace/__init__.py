@@ -46,7 +46,7 @@ class Permissions(object):
     CREATE_DIRECTORY = 2
     REMOVE_DIRECTORY = 3
 
-    class Error(StandardError):
+    class Error(BaseException):
         """
         Will be raised at Illegal operation
         """
