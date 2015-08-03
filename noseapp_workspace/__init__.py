@@ -122,7 +122,7 @@ class WorkSpace(object):
     @property
     def path(self):
         """
-        Path of workspace.
+        Path to workspace.
 
         :return: str
         """
