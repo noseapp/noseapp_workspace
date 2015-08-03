@@ -52,6 +52,7 @@ Must be installed like extension:
 
 import os
 import shutil
+import logging
 
 from noseapp.core import ExtensionInstaller
 
@@ -61,6 +62,9 @@ __all__ = (
     'Permissions',
     'create_workspace_config',
 )
+
+
+logger = logging.getLogger(__name__)
 
 
 def create_workspace_config(path, permissions=None, check_exist=True, create_if_not_exist=False):
@@ -140,6 +144,8 @@ class WorkSpace(object):
         self.__path = path
         self.__permissions = permissions or tuple()
 
+        logger.debug('Init new workspace at path "%s"', path)
+
     def __repr__(self):
         return '<WorkSpace: {}>'.format(self.__path)
 
@@ -201,6 +207,8 @@ class WorkSpace(object):
 
         :return: bool
         """
+        logger.debug('Check exist file "%s", at path "%s"', file_name, self.__path)
+
         return os.path.isfile(
             self.path_to(file_name),
         )
@@ -213,6 +221,8 @@ class WorkSpace(object):
 
         :return: bool
         """
+        logger.debug('Check exist directory "%s" at path "%s"', dir_name, self.__path)
+
         return os.path.isdir(
             self.path_to(dir_name),
         )
@@ -255,7 +265,7 @@ class WorkSpace(object):
     def go_to(self, dir_name):
         """
         Go to directory.
-        Will be created new instance of self on base path of directory.
+        Will be created new instance of self class on base path of dir_name.
 
         :param dir_name: name of directory
 
@@ -282,6 +292,8 @@ class WorkSpace(object):
         if not self.is_permission(Permissions.CREATE_DIRECTORY):
             raise Permissions.Error('create directory', self.path_to(dir_name))
 
+        logger.debug('Create new directory "%s" at path "%s"', dir_name, self.__path)
+
         dir_path = self.path_to(dir_name)
 
         if not os.path.exists(dir_path):
@@ -294,6 +306,19 @@ class WorkSpace(object):
             ),
         )
 
+    def create_dir_if_not_exist(self, dir_name):
+        """
+        Create new directory if not exist.
+
+        :param dir_name: name of dir
+
+        :return: WorkSpace
+        """
+        if not self.is_dir(dir_name):
+            return self.create_dir(dir_name)
+
+        return self.go_to(dir_name)
+
     def child_of_workspace(self, dir_name, permissions=None):
         """
         Create child workspace at self path.
@@ -304,6 +329,8 @@ class WorkSpace(object):
 
         :return: WorkSpace
         """
+        logger.debug('New child of workspace "%s" at path "%s"', dir_name, self.__path)
+
         if self.is_dir(dir_name):
             return self.__class__(
                 self.path_to(dir_name),
@@ -324,6 +351,8 @@ class WorkSpace(object):
         if not self.is_permission(Permissions.CREATE_FILE):
             raise Permissions.Error('create file', self.path_to(file_name))
 
+        logger.debug('Create new file "%s" at path "%s"', file_name, self.__path)
+
         file_path = self.path_to(file_name)
 
         if not self.is_file(file_name):
@@ -339,6 +368,19 @@ class WorkSpace(object):
             ),
         )
 
+    def create_file_if_not_exist(self, file_name):
+        """
+        Create new file if not exist.
+
+        :param file_name: name of file
+
+        :return: str
+        """
+        if not self.is_file(file_name):
+            return self.create_file(file_name)
+
+        return self.path_to(file_name)
+
     def create_log_file(self, file_name):
         """
         Create file by '<file_name>.log' pattern.
@@ -348,7 +390,10 @@ class WorkSpace(object):
         :return: str
         """
         file_name = '{}.log'.format(file_name)
-        self.create_file(file_name)
+
+        logger.debug('Create new log file "%s" at path "%s"', file_name, self.__path)
+
+        return self.create_file(file_name)
 
     def delete_file(self, file_name):
         """
@@ -361,6 +406,8 @@ class WorkSpace(object):
         if not self.is_permission(Permissions.REMOVE_FILE):
             raise Permissions.Error('remove file', self.path_to(file_name))
 
+        logger.debug('Delete file "%s" at path "%s"', file_name, self.__path)
+
         if self.is_file(file_name):
             os.remove(self.path_to(file_name))
 
@@ -372,6 +419,8 @@ class WorkSpace(object):
         """
         if not self.is_permission(Permissions.REMOVE_DIRECTORY):
             raise Permissions.Error('remove directory', self.__path)
+
+        logger.debug('Delete directory "%s" at path "%s"', dir_name, self.__path)
 
         path_to_dir = self.path_to(dir_name)
 
@@ -390,6 +439,8 @@ class WorkSpace(object):
         """
         if not self.is_permission(Permissions.REMOVE_DIRECTORY):
             raise Permissions.Error('remove directory', self.__path)
+
+        logger.debug('Delete workspace at path "%s"', self.__path)
 
         if os.path.exists(self.__path):
             shutil.rmtree(self.__path)

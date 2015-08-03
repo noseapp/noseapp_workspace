@@ -107,3 +107,21 @@ class BaseTests(TestCase):
         bin_name = 'test_bin_name'
         self.assertRaises(LookupError, self.ws.path_to_bin, bin_name)
         # TODO: test of real bin
+
+    def test_create_file_if_not_exist(self):
+        file_name = 'create_file_if_not_exist.txt'
+        self.assertFalse(self.ws.is_file(file_name))
+
+        self.ws.create_file_if_not_exist(file_name)
+        self.assertTrue(self.ws.is_file(file_name))
+
+        self.ws.create_file_if_not_exist(file_name)
+
+    def test_create_dir_if_not_exist(self):
+        dir_name = 'create_dir_if_not_exist.txt'
+        self.assertFalse(self.ws.is_dir(dir_name))
+
+        self.ws.create_dir_if_not_exist(dir_name)
+        self.assertTrue(self.ws.is_dir(dir_name))
+
+        self.ws.create_dir_if_not_exist(dir_name)
