@@ -48,6 +48,8 @@ class BaseTests(TestCase):
 
     def test_create_and_delete_file(self):
         file_name = 'test_create_file.txt'
+        self.assertRaises(OSError, self.ws.delete_file, file_name)
+
         self.ws.create_file(file_name)
         self.assertTrue(self.ws.is_file(file_name))
 
@@ -125,3 +127,23 @@ class BaseTests(TestCase):
         self.assertTrue(self.ws.is_dir(dir_name))
 
         self.ws.create_dir_if_not_exist(dir_name)
+
+    def test_copy_file(self):
+        orig_file_name = 'test_copy_file.txt'
+        copy_file_name = 'test_copy_file2.txt'
+
+        self.ws.create_file(orig_file_name)
+        self.assertTrue(self.ws.is_file(orig_file_name))
+
+        self.ws.copy_file(self.ws.path_to(orig_file_name), copy_file_name)
+        self.assertTrue(self.ws.is_file(copy_file_name))
+
+    def test_copy_dir(self):
+        orig_dir_name = 'test_copy_dir'
+        copy_dir_name = 'test_copy_dir2'
+
+        self.ws.create_dir(orig_dir_name)
+        self.assertTrue(self.ws.is_dir(orig_dir_name))
+
+        self.ws.copy_dir(self.ws.path_to(orig_dir_name), copy_dir_name)
+        self.assertTrue(self.ws.is_dir(copy_dir_name))

@@ -1,55 +1,5 @@
 # -*- coding: utf-8 -*-
 
-"""
-Extension for control by file system from your test application.
-
-
-Example:
-
-::
-
-    ws = WorkSpace(
-        '/path/to/entry/point/',
-        permissions=(
-            Permissions.CREATE_FILE,
-            Permissions.CREATE_DIRECTORY,
-        ),
-    )
-
-    bin = ws.go_to('bin')
-    daemon_bin = bin.path_to_bin('daemon')
-
-    logs = ws.go_to('logs')
-    logs.is_file('daemon.log')
-    logs.create_file('new.log') or logs.create_log_file('new')
-
-    tmp = ws.create_dir('tmp')
-    ws.is_dir('tmp')
-    tmp.create_file('new_tmp.tmp', content='Hello World!')
-
-    child_ws = ws.child_of_workspace('new_workspace')
-    # /path/to/entry/point/new_workspace
-    etc...
-
-
-Must be installed like extension:
-
-::
-
-    WORKSPACE_EX = create_workspace_config(
-        '/path/to/entry/point/',
-        permissions=(
-            Permissions.CREATE_FILE,
-            Permissions.CREATE_DIRECTORY,
-        ),
-    )
-
-    WorkSpace.install(app)
-
-    suite = Suite(__name__, require=['workspace'])
-
-"""
-
 import os
 import shutil
 import logging
@@ -395,6 +345,33 @@ class WorkSpace(object):
 
         return self.create_file(file_name)
 
+    def copy_file(self, src, file_name):
+        """
+        Create copy of file
+
+        :param src: absolute path to origin file
+        :param file_name: name of file for copy
+
+        :return: str
+        """
+        file_path = self.path_to(file_name)
+        shutil.copyfile(src, file_path)
+
+        return file_path
+
+    def copy_dir(self, src, dir_name):
+        """
+
+        :param src: absolute path to origin dir
+        :param dir_name: name of dir for copy
+
+        :return: WorkSpace
+        """
+        dir_path = self.path_to(dir_name)
+        shutil.copytree(src, dir_path)
+
+        return self.go_to(dir_name)
+
     def delete_file(self, file_name):
         """
         To delete file from self directory.
@@ -410,12 +387,27 @@ class WorkSpace(object):
 
         if self.is_file(file_name):
             os.remove(self.path_to(file_name))
+        else:
+            raise OSError(
+                'File "{}" does not exist at path "{}"'.format(file_name, self.__path),
+            )
+
+    def delete_file_if_exist(self, file_name):
+        """
+        Delete file if exist.
+
+        :param file_name: name of file
+        """
+        if self.is_file(file_name):
+            self.delete_file(file_name)
 
     def delete_dir(self, dir_name):
         """
-        Delete directory
+        Delete directory.
 
         :param dir_name: name of directory
+
+        :raises: OSError
         """
         if not self.is_permission(Permissions.REMOVE_DIRECTORY):
             raise Permissions.Error('remove directory', self.__path)
@@ -430,6 +422,15 @@ class WorkSpace(object):
             raise OSError(
                 'Directory "{}" does not exist'.format(path_to_dir),
             )
+
+    def delete_dir_if_exist(self, dir_name):
+        """
+        Delete directory if exist.
+
+        :param dir_name: name of dir
+        """
+        if self.is_dir(dir_name):
+            self.delete_dir(dir_name)
 
     def delete(self):
         """
@@ -448,3 +449,10 @@ class WorkSpace(object):
             raise OSError(
                 'Directory "{}" does not exist'.format(self.__path),
             )
+
+    def delete_if_exist(self):
+        """
+        Delete self directory if exist.
+        """
+        if os.path.exists(self.__path):
+            self.delete()

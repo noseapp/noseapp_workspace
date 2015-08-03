@@ -36,6 +36,8 @@ Example:
     ws.is_dir('tmp')
     tmp.create_file('new_tmp.tmp', content='Hello World!')
 
+    See full api of noseapp_workspace.WorkSpace
+
 
 Must be installed like extension:
 
