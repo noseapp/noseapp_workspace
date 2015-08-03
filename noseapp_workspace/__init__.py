@@ -129,6 +129,15 @@ class WorkSpace(object):
         return self.__path
 
     @property
+    def exist(self):
+        """
+        To return True if self path exist else False.
+
+        :return: bool
+        """
+        return os.path.exists(self.__path)
+
+    @property
     def permissions(self):
         """
         List of permissions.
@@ -269,7 +278,7 @@ class WorkSpace(object):
 
         return self.go_to(dir_name)
 
-    def child_of_workspace(self, dir_name, permissions=None):
+    def child_workspace(self, dir_name, permissions=None):
         """
         Create child workspace at self path.
         If not exist will be try to create.
@@ -454,5 +463,5 @@ class WorkSpace(object):
         """
         Delete self directory if exist.
         """
-        if os.path.exists(self.__path):
+        if self.exist:
             self.delete()
