@@ -36,6 +36,10 @@ Example:
     ws.is_dir('tmp')
     tmp.create_file('new_tmp.tmp', content='Hello World!')
 
+
+    child_ws = ws.child_workspace('new_workspace')
+    ...
+
     See full api of noseapp_workspace.WorkSpace
 
 
