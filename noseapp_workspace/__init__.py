@@ -361,8 +361,12 @@ class WorkSpace(object):
         :param src: absolute path to origin file
         :param file_name: name of file for copy
 
+        :raises: Permissions.Error
         :return: str
         """
+        if not self.is_permission(Permissions.CREATE_FILE):
+            raise Permissions.Error('create file', self.path_to(file_name))
+
         file_path = self.path_to(file_name)
         shutil.copyfile(src, file_path)
 
@@ -374,10 +378,14 @@ class WorkSpace(object):
         :param src: absolute path to origin dir
         :param dir_name: name of dir for copy
 
+        :raises: Permissions.Error
         :return: WorkSpace
         """
+        if not self.is_permission(Permissions.CREATE_DIRECTORY):
+            raise Permissions.Error('create directory', self.path_to(dir_name))
+
         dir_path = self.path_to(dir_name)
-        shutil.copytree(src, dir_path)
+        shutil.copytree(src.path if isinstance(src, WorkSpace) else src, dir_path)
 
         return self.go_to(dir_name)
 
