@@ -26,13 +26,8 @@ class BaseTests(TestCase):
     def setUp(self):
         self.ws = WorkSpace(
             create_ws_path(self),
-            permissions=(
-                Permissions.CREATE_FILE,
-                Permissions.REMOVE_FILE,
-                Permissions.CREATE_DIRECTORY,
-                Permissions.REMOVE_DIRECTORY,
-            ),
             create_if_not_exist=True,
+            permissions=Permissions.ALL,
         )
 
     def tearDown(self):

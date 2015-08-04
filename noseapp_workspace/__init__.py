@@ -46,6 +46,13 @@ class Permissions(object):
     CREATE_DIRECTORY = 2
     REMOVE_DIRECTORY = 3
 
+    ALL = (
+        CREATE_FILE,
+        REMOVE_FILE,
+        CREATE_DIRECTORY,
+        REMOVE_DIRECTORY,
+    )
+
     class Error(BaseException):
         """
         Will be raised at Illegal operation
