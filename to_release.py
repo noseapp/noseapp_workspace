@@ -1,5 +1,13 @@
 # -*- coding: utf-8 -*-
 
+"""
+To release library.
+
+Usage:
+
+    python to_release.py
+"""
+
 import os
 import subprocess
 
