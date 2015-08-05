@@ -7,8 +7,9 @@ import subprocess
 GIT_BIN = 'git'
 PYTHON_BIN = 'python'
 FROM_BRANCH = 'master'
+PACKAGE_NAME = 'noseapp_workspace'
 
-COMMON_SUBPROCESS_OPTIONS = {
+SUBPROCESS_OPTIONS = {
     'shell': True,
     'cwd': os.path.abspath(
         os.path.join(
@@ -33,11 +34,11 @@ def git(command):
 
 
 def call(command):
-    return subprocess.call(command, **COMMON_SUBPROCESS_OPTIONS)
+    return subprocess.call(command, **SUBPROCESS_OPTIONS)
 
 
 def check_output(command):
-    return subprocess.check_output(command, **COMMON_SUBPROCESS_OPTIONS)
+    return subprocess.check_output(command, **SUBPROCESS_OPTIONS)
 
 
 def check_git_branch():
@@ -49,7 +50,7 @@ def check_git_branch():
 
 
 def to_delete_old_files():
-    command = sudo('rm -rf ./noseapp_workspace.egg-info ./dist/')
+    command = sudo('rm -rf ./{}.egg-info ./dist/'.format(PACKAGE_NAME))
     call(command)
 
 
